@@ -1,0 +1,4 @@
+com\itcast\JobMain.class
+com\itcast\job\WordCountJob.class
+com\itcast\reducer\WordCountReducer.class
+com\itcast\mapper\WordCountMapper.class
