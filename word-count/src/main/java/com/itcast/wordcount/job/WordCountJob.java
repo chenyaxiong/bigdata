@@ -1,9 +1,11 @@
 package com.itcast.wordcount.job;
 
 import com.itcast.wordcount.JobMain;
+import com.itcast.wordcount.group.WordCountGroup;
 import com.itcast.wordcount.mapper.WordCountMapper;
 import com.itcast.wordcount.partitions.WordCountPartitioner;
 import com.itcast.wordcount.reducer.WordCountReducer;
+import com.itcast.wordcount.sort.WordCountComparator;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
@@ -25,13 +27,16 @@ public class WordCountJob extends Configured implements Tool {
 
         // 设置map相关信息
         wordCountJob.setMapperClass(WordCountMapper.class);
-        wordCountJob.setMapOutputKeyClass(Text.class);
+        wordCountJob.setMapOutputKeyClass(WordCountComparator.class);
         wordCountJob.setMapOutputValueClass(LongWritable.class);
 
         // 设置shuffle相关信息
         // 设置分区信息
         wordCountJob.setPartitionerClass(WordCountPartitioner.class);
         wordCountJob.setNumReduceTasks(2);
+
+        // 设置分组信息
+//        wordCountJob.setGroupingComparatorClass(WordCountGroup.class);
 
         // 涉及reduce相关信息
         wordCountJob.setReducerClass(WordCountReducer.class);
@@ -40,7 +45,7 @@ public class WordCountJob extends Configured implements Tool {
 
         // 设置输入数据类型，也就是k3，v3的数据写入什么文件中
         wordCountJob.setOutputFormatClass(TextOutputFormat.class);
-        TextOutputFormat.setOutputPath(wordCountJob, new Path("hdfs://node1:8020/wordcount_out_partitioner"));
+        TextOutputFormat.setOutputPath(wordCountJob, new Path("hdfs://node1:8020/wordcount_out_partitioner_sort"));
 
         return wordCountJob.waitForCompletion(true) ? 0 : 1;
     }

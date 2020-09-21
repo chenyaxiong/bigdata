@@ -1,23 +1,25 @@
 package com.itcast.wordcount.reducer;
 
-import org.apache.hadoop.io.IntWritable;
+import com.itcast.wordcount.sort.WordCountComparator;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
 
-public class WordCountReducer extends Reducer<Text, LongWritable, Text, LongWritable> {
+public class WordCountReducer extends Reducer<WordCountComparator, LongWritable, Text, LongWritable> {
 
     private final LongWritable result = new LongWritable();
+    private final Text resultKey = new Text();
 
     @Override
-    protected void reduce(Text key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException {
+    protected void reduce(WordCountComparator key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException {
         int sum = 0;
         for (LongWritable val : values) {
             sum += val.get();
         }
         result.set(sum);
-        context.write(key, result);
+        resultKey.set(key.getWord());
+        context.write(resultKey, result);
     }
 }

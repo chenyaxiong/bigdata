@@ -1,5 +1,6 @@
 package com.itcast.wordcount.mapper;
 
+import com.itcast.wordcount.sort.WordCountComparator;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -7,9 +8,9 @@ import org.apache.hadoop.mapreduce.Mapper;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-public class WordCountMapper extends Mapper<LongWritable,Text, Text, LongWritable> {
+public class WordCountMapper extends Mapper<LongWritable, Text, WordCountComparator, LongWritable> {
 
-    private final Text text = new Text();
+    private final WordCountComparator text = new WordCountComparator();
     private LongWritable longWritable = new LongWritable(1);
 
     @Override
@@ -18,7 +19,7 @@ public class WordCountMapper extends Mapper<LongWritable,Text, Text, LongWritabl
         String line = value.toString();
         StringTokenizer stringTokenizer = new StringTokenizer(line, ",");
         while (stringTokenizer.hasMoreTokens()) {
-            text.set(stringTokenizer.nextToken());
+            text.setWord(stringTokenizer.nextToken());
             context.write(text, longWritable);
         }
 //        if (StringUtils.isNotBlank(line)) {
